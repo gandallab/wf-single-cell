@@ -262,7 +262,8 @@ workflow pipeline {
                 .collectFile(keepHeader:true),
             prepare_report_data.out.summary
                 .collectFile(keepHeader:true),
-            prepare_report_data.out.umap_dir,
+            prepare_report_data.out.umap_dir
+                .collect(),
             process_bams.out.plots,
             umap_genes)
     emit:
