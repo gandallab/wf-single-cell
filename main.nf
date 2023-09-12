@@ -309,7 +309,7 @@ workflow {
                 [it[1], it[2], 
                 ["sample_id": it[0], 
                 'kit_name': it[1], 
-                'kit_version:': it[2], 
+                'kit_version': it[2],
                 'exp_cells': it[3]]] }
     } else {
         // Read single_cell_sample_sheet
@@ -328,17 +328,7 @@ workflow {
     .join(fastqingress_ids, failOnMismatch:true)
 
     // Merge the kit info and user-supplied meta data on kit name and version
-    sample_info = kit_configs.join(sample_kits, by: [0, 1], remainder: true)
-        // Remove kits that are not selected (sample_meta is null)
-        .filter( {kit_name, kit_version, kit_meta, sample_meta -> sample_meta })
-        // Rsise an error for unsupported kits
-        .map { kit, version, wf_kit_meta, user_sample_meta ->
-                if (!wf_kit_meta) {
-                    error "${kit} is not a supported kit"
-                }else{
-                    return [kit, version, wf_kit_meta, user_sample_meta]
-                }
-        }
+    sample_info = kit_configs.combine(sample_kits, by: [0, 1])
         .map {it->
             meta = it[2] + it[3] // Join the 2 meta maps
             kit_name = meta['kit_name']
