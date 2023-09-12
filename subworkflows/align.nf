@@ -41,7 +41,7 @@ process align_to_ref {
       --junc-bed ref_genes.bed $params.resources_mm2_flags  \
       ref_genome.fasta reads.fastq* \
         | samtools view -b --no-PG -t ref_chrom_sizes - \
-        | samtools sort -@ 2 --no-PG  - > "${sample_id}_sorted.bam"
+        | samtools sort -@ ${task.cpus > 6 ? 6 : task.cpus} --no-PG  - > "${sample_id}_sorted.bam"
     samtools index -@ ${task.cpus} "${sample_id}_sorted.bam"
     """
 }
