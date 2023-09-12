@@ -41,6 +41,7 @@ process combine_adapter_tables {
 process summarize_adapter_table {
     label "singlecell"
     cpus 1
+    memory { read_config.size() * 4 }
     input:
         tuple val(sample_id), path(read_config)
     output:

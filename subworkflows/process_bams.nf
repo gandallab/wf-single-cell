@@ -78,6 +78,7 @@ process assign_barcodes{
     label "singlecell"
     cpus 1
     memory 1.5.GB
+    time "12h"
     input:
          tuple val(sample_id),
                path("whitelist.tsv"),
@@ -389,9 +390,10 @@ process assign_features {
 process umi_gene_saturation {
     label "singlecell"
     cpus 4
+    memory { read_tags.size() * 4 } // probably * 3 is ok
     input:
         tuple val(sample_id),
-              path("read_tags.tsv")
+              path(read_tags, stageAs: "read_tags.tsv")
     output:
         tuple val(sample_id),
               path("*saturation_curves.png"),
@@ -408,9 +410,10 @@ process umi_gene_saturation {
 process construct_expression_matrix {
     label "singlecell"
     cpus 1
+    memory { read_tags.size() * 16 }
     input:
         tuple val(sample_id),
-              path("read_tags.tsv")
+              path(read_tags, stageAs: "read_tags.tsv")
     output:
         tuple val(sample_id), 
               path("*gene_expression.counts.tsv"),
@@ -426,10 +429,11 @@ process construct_expression_matrix {
 process process_expression_matrix {
     label "singlecell"
     cpus 1
+    memory { transcript_matrix.size() * 16 }
     input:
         tuple val(sample_id),
-              path("gene_matrix_counts.tsv"),
-              path("transcript_matrix_counts.tsv")
+              path(gene_matrix, stageAs: "gene_matrix_counts.tsv"),
+              path(transcript_matrix, stageAs: "transcript_matrix_counts.tsv")
     output:
         tuple val(sample_id),
               val('gene'),
@@ -459,6 +463,7 @@ process process_expression_matrix {
 process umap_reduce_expression_matrix {
     label "singlecell"
     cpus 1
+    memory { matrix.size() * 8 }
     input:
         tuple val(repeat_num),
               val(sample_id),

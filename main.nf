@@ -87,6 +87,8 @@ process getParams {
 
 process makeReport {
     label "singlecell"
+    cpus 1
+    memory '64G'
     input:
         path 'versions'
         path 'params.csv'
@@ -158,9 +160,11 @@ process output_report {
 
 process prepare_report_data {
     label "singlecell"
+    cpus 1
+    memory { read_tags.size() * 4 }
     input:
         tuple val(sample_id),
-              path('read_tags'),
+              path(read_tags, stageAs: 'read_tags'),
               path('config_stats'),
               path('white_list'),
               path('gene_expression'),
