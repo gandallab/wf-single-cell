@@ -3,7 +3,7 @@
 from pathlib import Path
 
 import pandas as pd
-from sklearn.decomposition import IncrementalPCA
+from sklearn.decomposition import PCA
 import umap
 
 from .util import get_named_logger, wf_parser  # noqa: ABS101
@@ -63,7 +63,7 @@ def run_pca(x, args):
     """Run PCA to generate args.pcn principal components."""
     # pcn must not exceed N samples or features
     pcn = min(args.pcn, x.shape[0], x.shape[1])
-    transformer = IncrementalPCA(n_components=pcn)
+    transformer = PCA(n_components=pcn)
     return transformer.fit_transform(x)
 
 
